@@ -13,7 +13,8 @@ import scala.concurrent.Future
 //#import-json-formats
 //#user-routes-class
 class CampaignRoutes(bidRequestRegistry: ActorRef[BidRequestRegistry.Command])(implicit val system: ActorSystem[_]) {
-
+  import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
+  import JsonFormats._
   //#user-routes-class
   //#import-json-formats
 
