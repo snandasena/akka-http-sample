@@ -29,19 +29,20 @@ final case class Geo(country: Option[String])
 //BidResponse protocol
 final case class BidResponse(id: String, bidRequestId: String, price: Double, adid: Option[String], banner: Option[Banner])
 
-object BidRequestRegistry {
+object RtbRegistry {
 
   // actor protocol
   sealed trait Command
 
-  final case class CreateBidResponse(bidRequest: BidRequest, replyTo: ActorRef[BidResponse]) extends Command
+  final case class CreateBidResponse(bidRequest: BidRequest, replyTo: ActorRef[Option[BidResponse]]) extends Command
 
   def apply(): Behavior[Command] = registry();
 
   def registry(): Behavior[Command] =
     Behaviors.receiveMessage {
       case CreateBidResponse(bidRequest, replyTo) =>
-        replyTo ! BidResponse("id", "bid", 0.0, Option.empty, Option.empty)
+//        replyTo ! Option(BidResponse("id_from_our_end", bidRequest.id, 0.001, Option("1234"), Option.empty))
+        replyTo ! Option.empty
         Behaviors.same
     }
 
