@@ -6,22 +6,23 @@ import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import akka.util.Timeout
-import com.example.BidRequestRegistry.CreateBidResponse
+import com.example.RtbRegistry.CreateBidResponse
 
 import scala.concurrent.Future
 
 //#import-json-formats
 //#user-routes-class
-class CampaignRoutes(bidRequestRegistry: ActorRef[BidRequestRegistry.Command])(implicit val system: ActorSystem[_]) {
-  import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
+class RtbRoutes(bidRequestRegistry: ActorRef[RtbRegistry.Command])(implicit val system: ActorSystem[_]) {
+
   import JsonFormats._
+  import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
   //#user-routes-class
   //#import-json-formats
 
   // If ask takes more time than this to complete the request is failed
   private implicit val timeout = Timeout.create(system.settings.config.getDuration("my-app.routes.ask-timeout"))
 
-  def createBidResponse(bidRequest: BidRequest): Future[BidResponse] =
+  def createBidResponse(bidRequest: BidRequest): Future[Option[BidResponse]] =
     bidRequestRegistry.ask(CreateBidResponse(bidRequest, _))
 
 
@@ -36,8 +37,9 @@ class CampaignRoutes(bidRequestRegistry: ActorRef[BidRequestRegistry.Command])(i
         concat(
           post {
             entity(as[BidRequest]) { bidRequest =>
-              onSuccess(createBidResponse(bidRequest)) { performed =>
-                complete((StatusCodes.OK, performed))
+              onSuccess(createBidResponse(bidRequest)) {
+                case Some(response) => complete((StatusCodes.OK, response))
+                case None => complete(StatusCodes.NoContent, Option.empty)
               }
             }
           })

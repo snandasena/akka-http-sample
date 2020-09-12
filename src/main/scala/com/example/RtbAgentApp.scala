@@ -10,7 +10,7 @@ import scala.util.Failure
 import scala.util.Success
 
 //#main-class
-object QuickstartApp {
+object RtbAgentApp {
   //#start-http-server
   private def startHttpServer(routes: Route, system: ActorSystem[_]): Unit = {
     // Akka HTTP still needs a classic ActorSystem to start
@@ -31,10 +31,10 @@ object QuickstartApp {
   def main(args: Array[String]): Unit = {
     //#server-bootstrapping
     val rootBehavior = Behaviors.setup[Nothing] { context =>
-      val userRegistryActor = context.spawn(BidRequestRegistry(), "BidRegistryActor")
-      context.watch(userRegistryActor)
+      val rtbRegistryActor = context.spawn(RtbRegistry(), "RtbRegistryActor")
+      context.watch(rtbRegistryActor)
 
-      val routes = new CampaignRoutes(userRegistryActor)(context.system)
+      val routes = new RtbRoutes(rtbRegistryActor)(context.system)
       startHttpServer(routes.userRoutes, context.system)
 
       Behaviors.empty
