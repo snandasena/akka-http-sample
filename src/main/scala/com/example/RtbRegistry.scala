@@ -2,6 +2,7 @@ package com.example
 
 import akka.actor.typed.scaladsl.Behaviors
 import akka.actor.typed.{ActorRef, Behavior}
+import com.example.Algorithm._
 
 object RtbRegistry {
 
@@ -15,7 +16,7 @@ object RtbRegistry {
   def registry(): Behavior[Command] =
     Behaviors.receiveMessage {
       case CreateBidResponse(bidRequest, replyTo) =>
-        replyTo ! Option(BidResponse("id_from_our_end", bidRequest.id, 0.001, Option("1234"), Option.empty))
+        replyTo ! bid(bidRequest)
         //        replyTo ! Option.empty
         Behaviors.same
     }
