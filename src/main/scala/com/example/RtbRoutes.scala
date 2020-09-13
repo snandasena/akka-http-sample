@@ -3,6 +3,7 @@ package com.example
 import akka.actor.typed.scaladsl.AskPattern._
 import akka.actor.typed.{ActorRef, ActorSystem}
 import akka.http.scaladsl.model.StatusCodes
+import akka.http.scaladsl.model.headers.Connection
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import akka.util.Timeout
@@ -35,14 +36,17 @@ class RtbRoutes(bidRequestRegistry: ActorRef[RtbRegistry.Command])(implicit val 
       //#users-get-delete
       pathEnd {
         concat(
-          post {
-            entity(as[BidRequest]) { bidRequest =>
-              onSuccess(createBidResponse(bidRequest)) {
-                case Some(response) => complete((StatusCodes.OK, response))
-                case None => complete(StatusCodes.NoContent, Option.empty)
+          respondWithDefaultHeaders(Connection("keep-alive")) {
+            post {
+              entity(as[BidRequest]) { bidRequest =>
+                onSuccess(createBidResponse(bidRequest)) {
+                  case Some(response) => complete((StatusCodes.OK, response))
+                  case None => complete(StatusCodes.NoContent, Option.empty)
+                }
               }
             }
-          })
+          }
+        )
       },
     )
     //#users-get-delete
