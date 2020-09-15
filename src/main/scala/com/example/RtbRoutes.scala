@@ -11,14 +11,12 @@ import com.example.RtbRegistry.CreateBidResponse
 
 import scala.concurrent.Future
 
-//#import-json-formats
-//#user-routes-class
+
 class RtbRoutes(bidRequestRegistry: ActorRef[RtbRegistry.Command])(implicit val system: ActorSystem[_]) {
 
   import JsonFormats._
   import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
-  //#user-routes-class
-  //#import-json-formats
+
 
   // If ask takes more time than this to complete the request is failed
   private implicit val timeout = Timeout.create(system.settings.config.getDuration("my-app.routes.ask-timeout"))
@@ -27,29 +25,25 @@ class RtbRoutes(bidRequestRegistry: ActorRef[RtbRegistry.Command])(implicit val 
     bidRequestRegistry.ask(CreateBidResponse(bidRequest, _))
 
 
-  //#all-routes
-  //#users-get-post
-  //#users-get-delete
-  val userRoutes: Route =
-  pathPrefix("bid") {
-    concat(
-      //#users-get-delete
-      pathEnd {
-        concat(
-          respondWithDefaultHeaders(Connection("keep-alive")) {
-            post {
-              entity(as[BidRequest]) { bidRequest =>
-                onSuccess(createBidResponse(bidRequest)) {
-                  case Some(response) => complete((StatusCodes.OK, response))
-                  case None => complete(StatusCodes.NoContent, Option.empty)
+  val bidRoutes: Route =
+    pathPrefix("authorized_buyers") {
+      concat(
+        pathEnd {
+          concat(
+            respondWithDefaultHeaders(Connection("keep-alive")) {
+              post {
+                entity(as[BidRequest]) { bidRequest =>
+                  onSuccess(createBidResponse(bidRequest)) {
+                    case Some(response) => complete((StatusCodes.OK, response))
+                    case None => complete(StatusCodes.NoContent, Option.empty)
+                  }
                 }
               }
             }
-          }
-        )
-      },
-    )
-    //#users-get-delete
-  }
-  //#all-routes
+          )
+        },
+      )
+
+    }
+
 }

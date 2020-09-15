@@ -1,7 +1,5 @@
 package com
 
-import scala.collection.immutable
-
 package object example {
 
   // Campaign protocol

@@ -1,5 +1,5 @@
 # Sample 01
-curl -X POST -H 'Content-Type: application/json' -i http://localhost:8080/bid --data ' {
+curl -X POST -H 'Content-Type: application/json' -i http://localhost:8080/authorized_buyers --data ' {
     "id": "dsfdsklfsknfkns",
     "site": {
       "id": 1,
@@ -20,7 +20,7 @@ curl -X POST -H 'Content-Type: application/json' -i http://localhost:8080/bid --
   }'
 
 # Sample 02
-curl -X POST -H 'Content-Type: application/json' -i http://localhost:8080/bid --data '{
+curl -X POST -H 'Content-Type: application/json' -i http://localhost:8080/authorized_buyers --data '{
     "id": "dsfdsklfsknfkns",
     "site": {
       "id": 1,
@@ -43,7 +43,7 @@ curl -X POST -H 'Content-Type: application/json' -i http://localhost:8080/bid --
   }'
 
 # Sample 03
-curl -X POST -H 'Content-Type: application/json' -i http://localhost:8080/bid --data ' {
+curl -X POST -H 'Content-Type: application/json' -i http://localhost:8080/authorized_buyers --data ' {
     "id": "dsfdsklfsknfkns",
     "site": {
       "id": 1,
