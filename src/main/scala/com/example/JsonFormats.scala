@@ -1,6 +1,5 @@
 package com.example
 
-//#json-formats
 
 import spray.json.DefaultJsonProtocol
 
@@ -25,4 +24,4 @@ object JsonFormats {
 
 }
 
-//#json-formats
+

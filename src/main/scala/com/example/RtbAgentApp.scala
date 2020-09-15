@@ -1,17 +1,16 @@
 package com.example
 
 import akka.actor.typed.ActorSystem
-import akka.actor.typed.scaladsl.adapter._
 import akka.actor.typed.scaladsl.Behaviors
+import akka.actor.typed.scaladsl.adapter._
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Route
 
-import scala.util.Failure
-import scala.util.Success
+import scala.util.{Failure, Success}
 
-//#main-class
+
 object RtbAgentApp {
-  //#start-http-server
+
   private def startHttpServer(routes: Route, system: ActorSystem[_]): Unit = {
     // Akka HTTP still needs a classic ActorSystem to start
     implicit val classicSystem: akka.actor.ActorSystem = system.toClassic
@@ -27,20 +26,20 @@ object RtbAgentApp {
         system.terminate()
     }
   }
-  //#start-http-server
+
   def main(args: Array[String]): Unit = {
-    //#server-bootstrapping
+
     val rootBehavior = Behaviors.setup[Nothing] { context =>
       val rtbRegistryActor = context.spawn(RtbRegistry(), "RtbRegistryActor")
       context.watch(rtbRegistryActor)
 
       val routes = new RtbRoutes(rtbRegistryActor)(context.system)
-      startHttpServer(routes.userRoutes, context.system)
+      startHttpServer(routes.bidRoutes, context.system)
 
       Behaviors.empty
     }
     val system = ActorSystem[Nothing](rootBehavior, "HelloAkkaHttpServer")
-    //#server-bootstrapping
+
   }
 }
-//#main-class
+
