@@ -1,5 +1,5 @@
-[
-  {
+# Sample 01
+curl -X POST -H 'Content-Type: application/json' -i http://localhost:8080/bid --data ' {
     "id": "dsfdsklfsknfkns",
     "site": {
       "id": 1,
@@ -17,8 +17,10 @@
         "country": "Sri Lanka"
       }
     }
-  },
-  {
+  }'
+
+# Sample 02
+curl -X POST -H 'Content-Type: application/json' -i http://localhost:8080/bid --data '{
     "id": "dsfdsklfsknfkns",
     "site": {
       "id": 1,
@@ -38,9 +40,10 @@
         "country": "Sri Lanka"
       }
     }
-  },
+  }'
 
-  {
+# Sample 03
+curl -X POST -H 'Content-Type: application/json' -i http://localhost:8080/bid --data ' {
     "id": "dsfdsklfsknfkns",
     "site": {
       "id": 1,
@@ -61,6 +64,4 @@
         "country": "Sri Lanka"
       }
     }
-  }
-
-]
+  }'
