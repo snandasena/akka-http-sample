@@ -6,7 +6,7 @@ import com.example.CampaignsData.data
 
 object Algorithm {
 
-  def bid(request: BidRequest): Option[BidResponse] = {
+  def bidOn(request: BidRequest): Option[BidResponse] = {
     val filteredCampaigns = data.filter(camp => filterBidRequest(request, camp))
       .filter(camp => filterBidFloor(request, camp))
 

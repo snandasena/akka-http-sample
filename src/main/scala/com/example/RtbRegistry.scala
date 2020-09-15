@@ -16,8 +16,7 @@ object RtbRegistry {
   def registry(): Behavior[Command] =
     Behaviors.receiveMessage {
       case CreateBidResponse(bidRequest, replyTo) =>
-        replyTo ! bid(bidRequest)
-        //        replyTo ! Option.empty
+        replyTo ! bidOn(bidRequest)
         Behaviors.same
     }
 
