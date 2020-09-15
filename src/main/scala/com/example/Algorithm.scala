@@ -1,17 +1,33 @@
 package com.example
 
+import java.util.UUID
+
 import com.example.CampaignsData.data
 
 object Algorithm {
 
   def bid(request: BidRequest): Option[BidResponse] = {
-    var res = data.filter(camp => filterTargetSites(request, camp))
+    val filteredCampaigns = data.filter(camp => filterBidRequest(request, camp))
+      .filter(camp => filterBidFloor(request, camp))
 
-
+    if (filteredCampaigns.nonEmpty) {
+      var selectedCampaign = filteredCampaigns.collectFirst(camp => camp).get
+      val filteredBannerCampaigns = filteredCampaigns.filter(camp => filterBanner(request, camp))
+      if (filteredBannerCampaigns.nonEmpty) {
+        selectedCampaign = filteredBannerCampaigns.collectFirst(cam => cam).get
+        val selectedBanner = selectedCampaign.banners.collectFirst(banner => banner)
+        Option(BidResponse(UUID.randomUUID().toString, request.id, selectedCampaign.bid, Option(selectedCampaign.id.toString), selectedBanner))
+      } else {
+        Option(BidResponse(UUID.randomUUID().toString, request.id, selectedCampaign.bid, Option.empty, Option.empty))
+      }
+    } else {
+      Option.empty
+    }
   }
 
   private def filterBidRequest(request: BidRequest, campaign: Campaign): Boolean = {
-
+    filterTargetSites(request, campaign) || filterDeviceCountry(request, campaign) ||
+      filterUserCountry(request, campaign)
   }
 
   private def filterTargetSites(request: BidRequest, campaign: Campaign): Boolean =
@@ -52,18 +68,18 @@ object Algorithm {
     }
 
 
-  private def filterPlacementInfo(request: BidRequest, campaign: Campaign): Boolean = {
+  private def filterBanner(request: BidRequest, campaign: Campaign): Boolean = {
     request.imp match {
       case None => true
       case Some(impressions) => impressions.exists(imp => {
         campaign.banners.exists(banner => {
-          if (imp.w.isDefined && imp.h.isDefined && banner.height == imp.h.get && banner.width == imp.w.get) {
-            true
-          } else if (imp.hmax.isDefined && imp.hmin.isDefined &&) {
-            true
-          } else {
-            false
-          }
+          val widthOk = imp.w.isDefined && banner.width == imp.w.get
+          val heightOk = imp.h.isDefined && banner.height == imp.h.get
+          val widthLowerBoundOk = imp.wmin.isDefined && banner.width >= imp.wmin.get
+          val widthUpperBoundOk = imp.wmax.isDefined && banner.width <= imp.wmax.get
+          val heightLowerBoundOk = imp.hmin.isDefined && banner.height >= imp.hmin.get
+          val heightUpperBoundOk = imp.hmax.isDefined && banner.height <= imp.hmax.get
+          (widthOk && heightOk) || (widthLowerBoundOk && heightLowerBoundOk) || (widthUpperBoundOk && heightUpperBoundOk)
         })
       })
     }
