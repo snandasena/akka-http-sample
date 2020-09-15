@@ -34,3 +34,6 @@ curl -X POST -H 'Content-Type: application/json' -i http://localhost:8080/author
     }
   }'
 ```
+
+#References
+* [Akka Http](https://developer.lightbend.com/guides/akka-http-quickstart-scala/)

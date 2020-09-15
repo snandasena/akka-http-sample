@@ -11,7 +11,7 @@ object RtbRegistry {
 
   final case class CreateBidResponse(bidRequest: BidRequest, replyTo: ActorRef[Option[BidResponse]]) extends Command
 
-  def apply(): Behavior[Command] = registry();
+  def apply(): Behavior[Command] = registry()
 
   def registry(): Behavior[Command] =
     Behaviors.receiveMessage {
